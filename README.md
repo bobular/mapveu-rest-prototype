@@ -31,7 +31,7 @@ The walkdir() call in server.js looks for handler.js files and adds
 them to the server's router using their filesystem path as the endpoint
 path (actually just the part between 'routes/' and '/handler.js').
 
-## Object Oriented design
+## Object-oriented design
 
 In each handler.js currently either a `FacetQuery` or `RecordQuery`
 object is instantiated and its `getData()` method called.
@@ -69,7 +69,9 @@ other so can have the same name.  It means it's easier to make the
 handlers for a whole new view (no need to change all the class names,
 e.g. to SampleViewQuery and SampleFacetQuery).
 
-But there's still some unwanted duplication that needs addressing.  See mixins section below.
+The main methods to look at are the constructors and getData().
+
+(But there's still some unwanted duplication that needs addressing.  See mixins section below.)
 
 ## Testing the other three endpoints
 
