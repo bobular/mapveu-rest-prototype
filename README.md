@@ -86,7 +86,103 @@ curl "http://localhost:8080/view/Genotype/panel/InfoTable/records?query=species_
 curl "http://localhost:8080/view/Sample/panel/InfoTable/records?query=species_category:%22Anopheles%20albimanus%22&fields=id,accession,geolocations" | jq .
 ```
 
+## No complex Solr configuration, or proxy, needed
+
+All the filters, facet statistics etc are configured in the data API
+implementation, so no need to set up query handlers in
+configoverlay.json and solrconfig.xml
+
+There shouldn't be any need for the security proxy either.
+
+If we can build the streaming CSV exporter into the restify server,
+that would be good, but there are some things to consider
+
+* currently all the exportable fields are copyField'ed to ext_blah
+  versions - IIRC to enable docValues which makes the super efficient
+  streaming possible. Maybe it's just easier to have docValues=true on
+  all fields?  maybe have a noExport flag in the client config for
+  fields that can't have docValues (are there any?)
 
 ## A need for mixins?
 
-TBC
+If you take a look at both `RecordQuery` classes,
+
+```
+./routes/view/Genotype/panel/InfoTable/records/RecordQuery.js
+./routes/view/Sample/panel/InfoTable/records/RecordQuery.js
+```
+
+you'll see that they are identical.  However, they inherit from
+different `ViewQuery` parent classes, so the class does behave
+differently.
+
+One solution I think is to use mixins, to bring the
+`parseQueryParams()` and `parseQueryParams()` methods in from
+some other class.
+
+Another place where this is needed is in `FacetQuery`.
+All PointMarkers (e.g. circular pie markers) in the client
+require bounding box and average lat/long statistics
+to be calculated by the back end.
+
+At the moment, in both `FacetQuery.js` files these facet
+statistics are injected by calling a static method on PointMarker
+which lives outside the `./routes' directory.  It's imported
+with a ridiculously long ../../../../....
+
+```
+  const { PointMarker } = require('../../../../../../lib/Marker/PointMarker.js');
+
+  ...
+
+  const commonGeoFacetStats = PointMarker.commonGeoFacetStats();
+```
+
+## user query handling not yet done in back-end agnostic fashion
+
+The user queries are what the user enters in the search bar (or clicks
+on legend categories).  For example "Anopheles gambiae in Species" in
+the old client gets sent to Solr as `species_category:"Anopheles
+gambiae"`.  There's also various logic (and, or and not) that combines
+them.
+
+In this prototype, they are passed straight through. The client would
+need to construct Solr syntax queries.  This is not ideal.  We don't
+want to be married to Solr!
+
+So, can we find a reasonably mature and widely accepted "text query
+syntax"?  If it was in JSON format, a query for "Anopheles gambiae in
+Species" AND "pool in Sample type" might look something like this.
+
+```
+{
+  AND: [
+    {
+      field: 'species_category',
+      query: 'Anopheles gambiae',
+      phrase: true
+    },
+    {
+      field: 'sample_type',
+      query: 'pool'
+    }
+  ]
+}
+```
+
+It would be great if it could handle numeric queries as well, e.g.
+
+```
+{
+  field: 'sample_size_i',
+  gt: 10
+}
+```
+
+But also handle ranges, dates etc.
+
+Is there something like this?  Should we make something if there isn't?
+
+
+
+

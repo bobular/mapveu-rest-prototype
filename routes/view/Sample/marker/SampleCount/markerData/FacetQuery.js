@@ -31,6 +31,8 @@ class FacetQuery extends ViewQuery {
     mincount: 1,
 
     facet: {
+      ${commonGeoFacetStats},
+
       cat: {
         type: "terms",
         field: "${catField}",
