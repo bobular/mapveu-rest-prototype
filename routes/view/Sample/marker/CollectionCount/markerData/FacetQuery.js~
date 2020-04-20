@@ -24,27 +24,20 @@ class FacetQuery extends ViewQuery {
         field: "json.facet",
         value:
 	`{
-  alleleCount: "sum(mul(sample_size_i,div(genotype_mutated_protein_value_f,50)))",
-
   geo: {
-    type: terms,
-    field: ${geoField},
+    type: "terms",
+    field: "${geoField}",
     limit: -1,
     mincount: 1,
 
     facet: {
       ${commonGeoFacetStats},
-      alleleCount: "sum(mul(sample_size_i,div(genotype_mutated_protein_value_f,50)))",
 
       cat: {
-        type: terms,
-        field: ${catField},
+        type: "terms",
+        field: "${catField}",
         limit: -1,
-        mincount: 1,
-
-        facet: {
-          alleleCount: "sum(mul(sample_size_i,div(genotype_mutated_protein_value_f,50)))"
-        }
+        mincount: 1
       }
     }
   }
