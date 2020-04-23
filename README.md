@@ -38,16 +38,19 @@ object is instantiated and its `getData()` method called.
 
 The source for these classes is in the directory tree that the handler.js file is located in.
 
-Let's use this example `/view/Sample/markers/SampleCount/markerData`
+Let's use this example `/view/Sample/markers/RecordCount/markerData`
 
 You can test it with
 
 ```
-curl "http://localhost:8080/view/Sample/marker/SampleCount/markerData?query=geolocations_cvterms:England&geoField=geohash_2&catField=species_category&debug=1" | jq .
+curl "http://localhost:8080/view/Sample/marker/RecordCount/markerData?query=geolocations_cvterms:England&geoField=geohash_2&catField=species_category&debug=1" | jq .
 ```
 
-The `FacetQuery` in that directory extends `ViewQuery` located in `../../../ViewQuery.js`,
-which is also `routes/view/Sample/ViewQuery.js`.
+The `FacetQuery` in that directory combines the `RecordCount` mixin
+that provides the parseQueryParams() method that sets up the facet
+query with the `ViewQuery` superclass located in
+`../../../ViewQuery.js`, which is also
+`routes/view/Sample/ViewQuery.js`.
 
 That `ViewQuery` extends `SolrQuery` located in `../SolrQuery.js` aka `routes/view/SolrQuery.js`.
 
@@ -105,38 +108,7 @@ that would be good, but there are some things to consider
 
 ## A need for mixins?
 
-If you take a look at both `RecordQuery` classes,
-
-```
-./routes/view/Genotype/panel/InfoTable/records/RecordQuery.js
-./routes/view/Sample/panel/InfoTable/records/RecordQuery.js
-```
-
-you'll see that they are identical.  However, they inherit from
-different `ViewQuery` parent classes, so the class does behave
-differently.
-
-One solution I think is to use mixins, to bring the
-`parseQueryParams()` and `parseQueryParams()` methods in from
-some other class.
-
-Another place where this is needed is in `FacetQuery`.
-All PointMarkers (e.g. circular pie markers) in the client
-require bounding box and average lat/long statistics
-to be calculated by the back end.
-
-At the moment, in both `FacetQuery.js` files these facet
-statistics are injected by calling a static method on PointMarker
-which lives outside the `./routes' directory.  It's imported
-with a ridiculously long ../../../../....
-
-```
-  const { PointMarker } = require('../../../../../../lib/Marker/PointMarker.js');
-
-  ...
-
-  const commonGeoFacetStats = PointMarker.commonGeoFacetStats();
-```
+Solved by Connor in https://github.com/bobular/mapveu-rest-prototype/pull/1
 
 ## user query handling not yet done in back-end agnostic fashion
 
