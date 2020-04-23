@@ -31,6 +31,7 @@ class FacetQuery extends ViewQuery {
     field: ${geoField},
     limit: -1,
     mincount: 1,
+    sort: "alleleCount desc",
 
     facet: {
       ${commonGeoFacetStats},
@@ -41,6 +42,7 @@ class FacetQuery extends ViewQuery {
         field: ${catField},
         limit: -1,
         mincount: 1,
+        sort: "alleleCount desc",
 
         facet: {
           alleleCount: "sum(mul(sample_size_i,div(genotype_mutated_protein_value_f,50)))"
