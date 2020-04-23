@@ -1,6 +1,6 @@
 const { ViewQuery } = require('../../../ViewQuery.js');
-const { FacetQueryMixin } = require('../../../../FacetQueryMixin');
+const { RecordCount } = require.main.require('./lib/mixins/Marker/RecordCount');
 
-class FacetQuery extends FacetQueryMixin(ViewQuery) {}
+class FacetQuery extends RecordCount(ViewQuery) {}
 
 exports.FacetQuery = FacetQuery;

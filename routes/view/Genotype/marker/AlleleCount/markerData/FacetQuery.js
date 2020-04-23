@@ -1,5 +1,5 @@
 const { ViewQuery } = require('../../../ViewQuery.js');
-const { PointMarker } = require('../../../../../../lib/Marker/PointMarker.js');
+const { PointMarker } = require.main.require('./lib/helpers/Marker/PointMarker.js');
 
 
 class FacetQuery extends ViewQuery {
