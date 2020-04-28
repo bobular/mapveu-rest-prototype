@@ -38,12 +38,12 @@ object is instantiated and its `getData()` method called.
 
 The source for these classes is in the directory tree that the handler.js file is located in.
 
-Let's use this example `/view/Sample/markers/RecordCount/markerData`
+Let's use this example `/view/Sample/marker/RecordCount/markerData`
 
 You can test it with
 
 ```
-curl "http://localhost:8080/view/Sample/marker/RecordCount/markerData?query=geolocations_cvterms:England&geoField=geohash_2&catField=species_category&debug=1" | jq .
+curl "http://localhost:8081/view/Sample/marker/RecordCount/markerData?query=geolocations_cvterms:England&geoField=geohash_2&catField=species_category&debug=1" | jq .
 ```
 
 The `FacetQuery` in that directory combines the `RecordCount` mixin
@@ -80,13 +80,13 @@ The main methods to look at are the constructors and getData().
 
 ```
 # data for genotype pie markers filtered for Allele:Kdr L1014 and categorising on Allele
-curl "http://localhost:8080/view/Genotype/marker/AlleleCount/markerData?query=locus_name_s:%22Kdr%20L1014%22&geoField=geohash_2&catField=genotype_name_s" | jq .
+curl "http://localhost:8081/view/Genotype/marker/AlleleCount/markerData?query=locus_name_s:%22Kdr%20L1014%22&geoField=geohash_2&catField=genotype_name_s" | jq .
 
 # info table data for genotype assays
-curl "http://localhost:8080/view/Genotype/panel/InfoTable/records?query=species_category:%22Anopheles%20albimanus%22&fields=id,accession,geolocations" | jq .
+curl "http://localhost:8081/view/Genotype/panel/InfoTable/records?query=species_category:%22Anopheles%20albimanus%22&fields=id,accession,geolocations" | jq .
 
 # info table data for samples
-curl "http://localhost:8080/view/Sample/panel/InfoTable/records?query=species_category:%22Anopheles%20albimanus%22&fields=id,accession,geolocations" | jq .
+curl "http://localhost:8081/view/Sample/panel/InfoTable/records?query=species_category:%22Anopheles%20albimanus%22&fields=id,accession,geolocations" | jq .
 ```
 
 ## No complex Solr configuration, or proxy, needed
